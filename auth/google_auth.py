@@ -68,6 +68,46 @@ else:
         "client_secret.json",
     )
 
+# --- Docker MCP Gateway Mode Support ---
+# These functions enable the MCP server to receive OAuth tokens
+# from Docker MCP Gateway instead of handling OAuth flow directly.
+
+
+def is_gateway_mode() -> bool:
+    """Check if running under Docker MCP Gateway.
+
+    When running under Docker MCP Gateway, OAuth is handled by the gateway
+    and tokens are injected via environment variables.
+
+    Returns:
+        bool: True if DOCKER_MCP_GATEWAY_MODE environment variable is set to "true"
+    """
+    return os.environ.get("DOCKER_MCP_GATEWAY_MODE") == "true"
+
+
+def get_credentials_from_gateway() -> Optional[Credentials]:
+    """Get credentials from Docker MCP Gateway injected token.
+
+    Docker MCP Gateway handles the OAuth flow and injects the access token
+    via the GOOGLE_ACCESS_TOKEN environment variable. This function creates
+    Google credentials from that token.
+
+    Note: Gateway handles token refresh, so we only need the access token.
+
+    Returns:
+        Optional[Credentials]: Google credentials if token is available, None otherwise
+    """
+    access_token = os.environ.get("GOOGLE_ACCESS_TOKEN")
+    if not access_token:
+        logger.debug("[gateway_mode] No GOOGLE_ACCESS_TOKEN environment variable found")
+        return None
+
+    logger.info("[gateway_mode] Creating credentials from Gateway-injected access token")
+    # Create credentials from access token only
+    # Gateway handles refresh, so we don't need refresh_token here
+    return Credentials(token=access_token)
+
+
 # --- Helper Functions ---
 
 
@@ -544,6 +584,15 @@ def get_credentials(
     Returns:
         Valid Credentials object or None.
     """
+    # Check Docker MCP Gateway mode first
+    if is_gateway_mode():
+        credentials = get_credentials_from_gateway()
+        if credentials:
+            logger.info("[get_credentials] Running in Docker MCP Gateway mode with injected token")
+            return credentials
+        else:
+            logger.warning("[get_credentials] Gateway mode enabled but no token found, falling back to normal flow")
+
     # First, try OAuth 2.1 session store if we have a session_id (FastMCP session)
     if session_id:
         try:
