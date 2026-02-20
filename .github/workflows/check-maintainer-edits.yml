@@ -7,7 +7,7 @@ on:
 jobs:
   check-maintainer-edits:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.fork == true || github.event.pull_request.head.repo.full_name != github.repository
+    if: github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
       - name: Check if maintainer edits are enabled
@@ -41,7 +41,7 @@ jobs:
 
   check-maintainer-edits-internal:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.head.repo.fork == false && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
       - name: Skip check for internal PRs
