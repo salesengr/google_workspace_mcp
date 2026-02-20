@@ -6,7 +6,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyPI](https://img.shields.io/pypi/v/workspace-mcp.svg)](https://pypi.org/project/workspace-mcp/)
 
-**Complete Google Workspace control through natural language.** Gmail, Calendar, Drive, Docs, Sheets, Slides, Forms, Tasks, Chat, and Custom Search—all via MCP.
+**Complete Google Workspace control through natural language.** Gmail, Calendar, Drive, Docs, Sheets, Slides, Forms, Tasks, Chat, Apps Script, and Custom Search—all via MCP.
 
 [Quick Start](#-quick-start) • [Tools Reference](#-tools-reference) • [Configuration](#-configuration) • [OAuth Setup](#-oauth-setup)
 
@@ -72,6 +72,7 @@ export OAUTHLIB_INSECURE_TRANSPORT=1  # Development only
 | `search_drive_files` | Core | Search files with Drive query syntax or free text |
 | `get_drive_file_content` | Core | Read content from Docs, Sheets, Office files (.docx, .xlsx, .pptx) |
 | `create_drive_file` | Core | Create files from content or URL (supports file://, http://, https://) |
+| `create_drive_folder` | Core | Create empty folders in Drive or shared drives |
 | `list_drive_items` | Extended | List folder contents with shared drive support |
 | `update_drive_file` | Extended | Update metadata, move between folders, star, trash |
 | `get_drive_file_permissions` | Complete | Check sharing status and permissions |
@@ -97,7 +98,7 @@ export OAUTHLIB_INSECURE_TRANSPORT=1  # Development only
 |------|------|-------------|
 | `get_doc_content` | Core | Extract text from Docs or .docx files (supports tabs) |
 | `create_doc` | Core | Create new documents with optional initial content |
-| `modify_doc_text` | Core | Insert, replace, format text (bold, italic, colors, fonts) |
+| `modify_doc_text` | Core | Insert, replace, format text (bold, italic, colors, fonts, links) |
 | `search_docs` | Extended | Find documents by name |
 | `find_and_replace_doc` | Extended | Global find/replace with case matching |
 | `list_docs_in_folder` | Extended | List Docs in a specific folder |
@@ -121,8 +122,8 @@ export OAUTHLIB_INSECURE_TRANSPORT=1  # Development only
 | `create_spreadsheet` | Core | Create new spreadsheets with multiple sheets |
 | `list_spreadsheets` | Extended | List accessible spreadsheets |
 | `get_spreadsheet_info` | Extended | Get metadata, sheets, conditional formats |
+| `format_sheet_range` | Extended | Apply colors, number formats, text wrapping, alignment, bold/italic, font size |
 | `create_sheet` | Complete | Add sheets to existing spreadsheets |
-| `format_sheet_range` | Complete | Apply colors and number formats |
 | `add_conditional_formatting` | Complete | Add boolean or gradient rules |
 | `update_conditional_formatting` | Complete | Modify existing rules |
 | `delete_conditional_formatting` | Complete | Remove formatting rules |
@@ -141,7 +142,7 @@ export OAUTHLIB_INSECURE_TRANSPORT=1  # Development only
 
 **Comments:** `read_presentation_comments`, `create_presentation_comment`, `reply_to_presentation_comment`, `resolve_presentation_comment`
 
-### Google Forms (5 tools)
+### Google Forms (6 tools)
 
 | Tool | Tier | Description |
 |------|------|-------------|
@@ -150,6 +151,7 @@ export OAUTHLIB_INSECURE_TRANSPORT=1  # Development only
 | `list_form_responses` | Extended | List responses with pagination |
 | `set_publish_settings` | Complete | Configure template and authentication settings |
 | `get_form_response` | Complete | Get individual response details |
+| `batch_update_form` | Complete | Execute batch updates to forms (questions, items, settings) |
 
 ### Google Tasks (12 tools)
 
@@ -167,6 +169,26 @@ export OAUTHLIB_INSECURE_TRANSPORT=1  # Development only
 | `delete_task_list` | Complete | Delete task lists (and all tasks) |
 | `move_task` | Complete | Reposition or move between lists |
 | `clear_completed_tasks` | Complete | Hide completed tasks |
+
+### Google Apps Script (11 tools)
+
+| Tool | Tier | Description |
+|------|------|-------------|
+| `list_script_projects` | Core | List accessible Apps Script projects |
+| `get_script_project` | Core | Get complete project with all files |
+| `get_script_content` | Core | Retrieve specific file content |
+| `create_script_project` | Core | Create new standalone or bound project |
+| `update_script_content` | Core | Update or create script files |
+| `run_script_function` | Core | Execute function with parameters |
+| `create_deployment` | Extended | Create new script deployment |
+| `list_deployments` | Extended | List all project deployments |
+| `update_deployment` | Extended | Update deployment configuration |
+| `delete_deployment` | Extended | Remove deployment |
+| `list_script_processes` | Extended | View recent executions and status |
+
+**Enables:** Cross-app automation, persistent workflows, custom business logic execution, script development and debugging
+
+**Note:** Trigger management is not currently supported via MCP tools.
 
 ### Google Chat (4 tools)
 
