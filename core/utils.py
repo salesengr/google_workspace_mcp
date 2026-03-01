@@ -2,7 +2,9 @@ import io
 import logging
 import os
 import tempfile
-import zipfile, xml.etree.ElementTree as ET
+import zipfile
+
+from defusedxml import ElementTree as ET
 
 from typing import List, Optional
 
