@@ -63,11 +63,13 @@ WORKSPACE_MCP_BASE_URI = os.getenv("WORKSPACE_MCP_BASE_URI", "http://localhost")
 _current_transport_mode = "stdio"  # Default to stdio
 
 # Basic MCP server instance
+WORKSPACE_MCP_HOST = os.getenv("WORKSPACE_MCP_HOST", "127.0.0.1")
+
 server = FastMCP(
     name="google_workspace",
     server_url=f"{WORKSPACE_MCP_BASE_URI}:{WORKSPACE_MCP_PORT}/mcp",
     port=WORKSPACE_MCP_PORT,
-    host="0.0.0.0"
+    host=WORKSPACE_MCP_HOST
 )
 
 def set_transport_mode(mode: str):
