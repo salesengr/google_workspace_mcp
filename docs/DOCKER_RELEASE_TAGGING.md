@@ -21,6 +21,16 @@ Run workflow dispatch with:
 - `packaging_rev`: integer revision for packaging updates (`1`, `2`, ...)
 - `publish_latest`: true/false
 
+## Recommended update flow
+1. Run `bash scripts/update_from_upstream_and_build.sh` to:
+   - fetch `origin` + `upstream`
+   - create a fresh sync branch from `upstream/main`
+   - re-apply gateway overlay files from `origin/main`
+2. (Optional) run local build checks with:
+   - `RUN_BUILD=1 RUN_COMPOSE_BUILD=1 bash scripts/update_from_upstream_and_build.sh`
+3. Open a PR from the sync branch into `main`.
+4. After merge, dispatch Docker publish workflow with the new upstream tag/revision.
+
 ## Revision rules
 - New upstream version -> reset packaging revision to `1`
 - Packaging-only changes on same upstream -> increment revision (`r2`, `r3`, ...)
