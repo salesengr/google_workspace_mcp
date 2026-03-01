@@ -63,13 +63,28 @@ Replace these values:
 
 ```bash
 # Build the Docker image
-docker-compose -f docker-compose.gateway.yml build
+docker compose -f docker-compose.gateway.yml build
 
 # Start the server
-docker-compose -f docker-compose.gateway.yml up -d
+docker compose -f docker-compose.gateway.yml up -d
 
 # Check health
 curl http://localhost:8000/health
+```
+
+### Optional: Automated Upstream Sync + Build Helper
+
+Use the included helper to create a fresh sync branch from `upstream/main`, re-apply gateway overlay files from your fork, and optionally build/test:
+
+```bash
+# default: fetch, create sync branch, re-apply overlay, push branch
+bash scripts/update_from_upstream_and_build.sh
+
+# also run Docker build and compose build
+RUN_BUILD=1 RUN_COMPOSE_BUILD=1 bash scripts/update_from_upstream_and_build.sh
+
+# include OAuth smoke test script
+RUN_SMOKE_TEST=1 bash scripts/update_from_upstream_and_build.sh
 ```
 
 ### 3. Import Catalog
@@ -139,7 +154,7 @@ docker mcp tools call google-workspace search_drive_files '{"query": "type:docum
 ### Server won't start - OAuth credentials missing
 ```bash
 # Check logs
-docker-compose -f docker-compose.gateway.yml logs
+docker compose -f docker-compose.gateway.yml logs
 
 # Ensure .env file exists with credentials
 cat .env
@@ -169,7 +184,7 @@ docker mcp catalog ls
 
 ```bash
 # Stop the server
-docker-compose -f docker-compose.gateway.yml down
+docker compose -f docker-compose.gateway.yml down
 
 # Disable the server
 docker mcp server disable google-workspace
