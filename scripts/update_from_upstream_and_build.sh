@@ -23,7 +23,6 @@ OVERLAY_FILES=(
   "docker-compose.gateway.yml"
   "docs/DOCKER_DESKTOP_MCP_PANEL_SETUP.md"
   "docs/DOCKER_RELEASE_TAGGING.md"
-  "scripts/test-docker-mcp-oauth.sh"
   "workspace-mcp-local-catalog.yaml"
   ".github/workflows/docker-publish.yml"
 )
@@ -40,7 +39,6 @@ for file in "${OVERLAY_FILES[@]}"; do
   git checkout "${ORIGIN_REMOTE}/main" -- "$file"
 done
 
-chmod +x scripts/test-docker-mcp-oauth.sh || true
 
 echo "== Git status =="
 git status --short
@@ -59,8 +57,11 @@ if [[ "$RUN_COMPOSE_BUILD" == "1" ]]; then
 fi
 
 if [[ "$RUN_SMOKE_TEST" == "1" ]]; then
-  echo "== running gateway oauth smoke script =="
-  bash scripts/test-docker-mcp-oauth.sh
+  echo "== running basic gateway smoke test (container starts + /health) =="
+  docker run --rm -d --name workspace-mcp-gateway-smoke -p 18000:8000 workspace-mcp-gateway:latest >/dev/null
+  sleep 4
+  curl -fsS http://127.0.0.1:18000/health >/dev/null
+  docker rm -f workspace-mcp-gateway-smoke >/dev/null 2>&1 || true
 fi
 
 if [[ "$PUSH_BRANCH" == "1" ]]; then

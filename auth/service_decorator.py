@@ -28,6 +28,7 @@ from auth.scopes import (
     GMAIL_MODIFY_SCOPE,
     GMAIL_LABELS_SCOPE,
     GMAIL_SETTINGS_BASIC_SCOPE,
+    DRIVE_SCOPE,
     DRIVE_READONLY_SCOPE,
     DRIVE_FILE_SCOPE,
     DOCS_READONLY_SCOPE,
@@ -61,7 +62,7 @@ logger = logging.getLogger(__name__)
 
 
 # Authentication helper functions
-def _get_auth_context(
+async def _get_auth_context(
     tool_name: str,
 ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
@@ -75,8 +76,8 @@ def _get_auth_context(
         if not ctx:
             return None, None, None
 
-        authenticated_user = ctx.get_state("authenticated_user_email")
-        auth_method = ctx.get_state("authenticated_via")
+        authenticated_user = await ctx.get_state("authenticated_user_email")
+        auth_method = await ctx.get_state("authenticated_via")
         mcp_session_id = ctx.session_id if hasattr(ctx, "session_id") else None
 
         if mcp_session_id:
@@ -426,6 +427,7 @@ SCOPE_GROUPS = {
     "gmail_labels": GMAIL_LABELS_SCOPE,
     "gmail_settings_basic": GMAIL_SETTINGS_BASIC_SCOPE,
     # Drive scopes
+    "drive": DRIVE_SCOPE,
     "drive_read": DRIVE_READONLY_SCOPE,
     "drive_file": DRIVE_FILE_SCOPE,
     # Docs scopes
@@ -607,7 +609,7 @@ def require_google_service(
             # which does not include 'service'.
 
             # Get authentication context early to determine OAuth mode
-            authenticated_user, auth_method, mcp_session_id = _get_auth_context(
+            authenticated_user, auth_method, mcp_session_id = await _get_auth_context(
                 func.__name__
             )
 
@@ -754,7 +756,7 @@ def require_multiple_services(service_configs: List[Dict[str, Any]]):
         async def wrapper(*args, **kwargs):
             # Get authentication context early
             tool_name = func.__name__
-            authenticated_user, _, mcp_session_id = _get_auth_context(tool_name)
+            authenticated_user, _, mcp_session_id = await _get_auth_context(tool_name)
 
             # Extract user_google_email based on OAuth mode
             if is_oauth21_enabled():
