@@ -1,0 +1,57 @@
+# Docker MCP Gateway Catalog Entry for Google Workspace MCP (Local)
+#
+# This catalog entry configures Google Workspace MCP as a remote HTTP server
+# for Docker MCP Gateway. The server manages its own OAuth flow using your
+# Google OAuth credentials (provided in .env file).
+#
+# Usage:
+#   docker mcp catalog import ./workspace-mcp-local-catalog.yaml
+#   docker mcp server enable google-workspace
+#
+# Note: You must provide your own Google OAuth Client ID/Secret in .env
+# OAuth authorization is triggered when you first call a tool.
+
+version: 3
+name: workspace-mcp-local
+displayName: Google Workspace MCP for Docker MCP Gateway (Local)
+
+registry:
+  google-workspace:
+    title: "Google Workspace MCP"
+    description: "Full Google Workspace integration: Gmail, Drive, Calendar, Docs, Sheets, Forms, Slides, Tasks, Search"
+    type: remote
+
+    # Dynamic tool discovery - tools are fetched from the server
+    dynamic:
+      tools: true
+
+    # Metadata for catalog display
+    meta:
+      category: productivity
+      tags:
+        - google-workspace
+        - gmail
+        - drive
+        - calendar
+        - docs
+        - sheets
+        - forms
+        - slides
+        - tasks
+        - productivity
+        - remote
+
+    # Display information
+    about:
+      title: Google Workspace MCP
+      description: "Comprehensive Google Workspace integration providing access to Gmail, Google Drive, Calendar, Docs, Sheets, Forms, Slides, and Tasks through the Model Context Protocol."
+      icon: https://workspace.google.com/favicon.ico
+
+    # Remote server configuration
+    remote:
+      transport_type: streamable-http
+      url: http://localhost:8000/mcp
+
+    # OAuth handled by the MCP server itself (not Docker MCP Gateway)
+    # You must provide your own Google OAuth Client ID/Secret in .env
+    # Server manages OAuth flow and token storage using your credentials

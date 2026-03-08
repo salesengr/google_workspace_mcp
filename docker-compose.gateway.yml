@@ -1,0 +1,40 @@
+# Docker Compose for Google Workspace MCP with Docker MCP Gateway
+#
+# Architecture:
+#   gateway: HTTP server for Docker MCP Gateway (self-managed OAuth)
+#
+# Usage:
+#   # Start the server
+#   docker-compose -f docker-compose.gateway.yml up -d
+#   docker mcp catalog import ./workspace-mcp-local-catalog.yaml
+#   docker mcp server enable google-workspace
+#
+#   # OAuth is triggered automatically on first tool call
+#
+#   # Build image:
+#   docker-compose -f docker-compose.gateway.yml build
+
+version: '3.8'
+
+services:
+  # HTTP server for Docker MCP Gateway
+  # Runs on localhost:8000 and manages its own OAuth flow
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    image: workspace-mcp-gateway:latest
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env  # Loads all variables from .env file
+    environment:
+      # Override specific settings if needed
+      - OAUTHLIB_INSECURE_TRANSPORT=1
+      - MCP_SINGLE_USER_MODE=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
